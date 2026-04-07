@@ -1,13 +1,8 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
-  name: Default   # self-hosted agent 
+  name: Default
 
 steps:
 - task: UseDotNet@2
@@ -23,6 +18,20 @@ steps:
 
 - script: dotnet pack --configuration Release -o $(Build.ArtifactStagingDirectory)
   displayName: 'Create NuGet package'
+
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
+
+- task: NuGetAuthenticate@1
+  displayName: 'Authenticate to Azure Artifacts'
+
+- task: NuGetCommand@2
+  displayName: 'Push package to Azure Artifacts'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'myfeed'
 
 - task: PublishBuildArtifacts@1
   inputs:
