@@ -31,7 +31,7 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: 'myfeed'
+    publishVstsFeed: 'StringExtensionsProject/myfeed'
 
 - task: PublishBuildArtifacts@1
   inputs:
