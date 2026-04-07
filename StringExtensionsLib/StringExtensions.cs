@@ -1,13 +1,20 @@
-﻿namespace StringExtensionsLib
+﻿
+
+using System;
+
+namespace StringExtensionsLib
 {
     public static class StringExtensions
     {
-        public static bool StartsWithUpper(this string value)
+        public static bool StartsWithUpperCase(this string str)
         {
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrWhiteSpace(str))
+            {
                 return false;
+            }
 
-            return char.IsUpper(value[0]);
+            // Check if the first character is an uppercase letter
+            return char.IsUpper(str[0]);
         }
     }
 }
