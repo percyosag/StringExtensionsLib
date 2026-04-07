@@ -1,0 +1,39 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- script: dotnet restore
+  displayName: 'Restore packages'
+
+- script: dotnet build --configuration Release
+  displayName: 'Build project'
+
+- script: dotnet pack --configuration Release -o $(Build.ArtifactStagingDirectory)
+  displayName: 'Create NuGet package'
+
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
+
+- task: NuGetAuthenticate@1
+  displayName: 'Authenticate to Azure Artifacts'
+
+- task: NuGetCommand@2
+  displayName: 'Push package to Azure Artifacts'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'StringExtensionsProject/myfeed'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
